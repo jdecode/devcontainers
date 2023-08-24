@@ -20,7 +20,7 @@ return [
         'profile_image' => [
             'path' => 'users/profile-images/',
             'thumbnail_path' => 'users/profile-images/thumbnails/',
-            'max' => 5120,
+            'max' => 10240,
             'thumbnail_width_px' => 32,
             'thumbnail_height_px' => 32,
             'image_width_px' => 512,
