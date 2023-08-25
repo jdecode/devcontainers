@@ -103,8 +103,8 @@
             "@pest"
         ],
         "post-merge": [
-            "@php artisan migrate",
             "composer install",
+            "@php artisan migrate",
             "@php artisan db:seed"
         ],
         "tests": [
