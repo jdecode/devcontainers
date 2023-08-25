@@ -12,7 +12,7 @@ class FileService
 {
     use ActivityLog;
 
-    public function resizeImage(UploadedFile $image, $width, $height): Image
+    public function resizeImage(UploadedFile $image, int $width, int $height): Image
     {
         $image = FacadeImage::make($image->getContent());
         if ($image->width() > $width || $image->height() > $height) {
