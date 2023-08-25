@@ -8,9 +8,13 @@ class ProfileImageUploadRequest extends FormRequest
 {
     public function rules(): array
     {
-        $max = config('constants.user.profile_image.max');
         return [
-            'file' => ['required', 'image', 'mimes:jpeg,jpg,png,gif', 'max:' . $max]
+            'file' => [
+                'required',
+                'file',
+                'mimes:jpeg,jpg,png,gif',
+                'max:' . config('constants.user.profile_image.max_file_size')
+            ]
         ];
     }
 }

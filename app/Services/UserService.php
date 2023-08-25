@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Jobs\RemoveFileJob;
 use App\Jobs\VerifyEmailJob;
 use App\Models\User;
 use Config;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserService
 {
@@ -43,28 +45,23 @@ class UserService
 
     public function getUserImage(User $user, bool $thumbnail = false): ?string
     {
-        $s3Service = new S3Service();
         $pathType = $thumbnail ? 'thumbnail_path' : 'path';
         $path = config("constants.user.profile_image.$pathType");
         $filename = $user->image_filename;
-        return $filename ? $s3Service->preSignedGetRequest($path . $filename) : null;
+        return $filename ? Storage::temporaryUrl($path . $filename, now()->addHour()) : null;
     }
 
     public function deleteUserImage(User $user): void
     {
-        $service = new FileService();
         $path = config('constants.user.profile_image.path');
         $thumbnailPath = config('constants.user.profile_image.thumbnail_path');
 
         if ($user->image_filename) {
-            $service->removeFile($path . '/' . $user->image_filename);
-            $service->removeFile($thumbnailPath . '/' . $user->image_filename);
+            dispatch(new RemoveFileJob($path . '/' . $user->image_filename))->onQueue('default');
+            dispatch(new RemoveFileJob($thumbnailPath . '/' . $user->image_filename))->onQueue('default');
         }
 
-        $user->update([
-            'image_original_filename' => null,
-            'image_filename' => null
-        ]);
+        $user->update(['image_filename' => null]);
     }
 
     public function upsertUserImage(User $user, UploadedFile $image): array
@@ -85,19 +82,15 @@ class UserService
         $service->uploadImage($thumbnail, $thumbnailPath . '/' . $filename);
 
         if ($user->image_filename) {
-            $service->removeFile($path . $user->image_filename);
-            $service->removeFile($thumbnailPath . $user->image_filename);
+            dispatch(new RemoveFileJob($path . $user->image_filename))->onQueue('default');
+            dispatch(new RemoveFileJob($thumbnailPath . $user->image_filename))->onQueue('default');
         }
 
-        $user->update([
-            'image_original_filename' => $image->getClientOriginalName(),
-            'image_filename' => $filename
-        ]);
+        $user->update(['image_filename' => $filename]);
 
-        $s3Service = new S3Service();
         return [
-            'image' => $s3Service->preSignedGetRequest($path . $filename),
-            'thumbnail' => $s3Service->preSignedGetRequest($thumbnailPath . $filename)
+            'image' => Storage::temporaryUrl($path . $filename, now()->addHour()),
+            'thumbnail' => Storage::temporaryUrl($thumbnailPath . $filename, now()->addHour())
         ];
     }
 }

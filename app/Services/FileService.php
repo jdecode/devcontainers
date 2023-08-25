@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Traits\ActivityLog;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Image;
 use Intervention\Image\Facades\Image as FacadeImage;
@@ -11,9 +12,9 @@ class FileService
 {
     use ActivityLog;
 
-    public function resizeImage($image, $width, $height): Image
+    public function resizeImage(UploadedFile $image, $width, $height): Image
     {
-        $image = FacadeImage::make($image);
+        $image = FacadeImage::make($image->getContent());
         if ($image->width() > $width || $image->height() > $height) {
             return FacadeImage::make($image)->resize($width, $height, function ($constraint) {
                 $constraint->aspectRatio();
@@ -35,14 +36,5 @@ class FileService
     {
         $imageStream = $image->stream()->__toString();
         Storage::disk('s3')->put($path, $imageStream);
-    }
-
-    public function removeFile(string $filename): void
-    {
-        if (Storage::disk('s3')->exists($filename)) {
-            Storage::disk('s3')->delete($filename);
-            return;
-        }
-        $this->activity(log: 'Cannot remove file', properties: ['message' => "file $filename does not exists"]);
     }
 }

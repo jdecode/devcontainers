@@ -25,12 +25,6 @@ class UserResource extends JsonResource
             'has_subscribed' => $this->subscribed(),
             'image' => $this->image,
             'image_thumbnail' => $this->image_thumbnail,
-//            'notifications_count' => $this->notifications_count,
-//            'tokens_count' => $this->tokens_count,
-//            'permissions_count' => $this->permissions_count,
-//            'read_notifications_count' => $this->read_notifications_count,
-//            'roles_count' => $this->roles_count,
-//            'unread_notifications_count' => $this->unread_notifications_count,
         ];
     }
 }
