@@ -36,3 +36,25 @@ test('Upload and delete profile image', function () {
         ->assertOk();
     Storage::assertDirectoryEmpty(config('filesystems.disks.test.root') . '/users');
 });
+
+test('Cannot upload file as no verified user', function () {
+    $this->user->update(['email_verified_at' => null]);
+    $this->actingAs($this->user)
+        ->post(route('profile-image.store'), [
+            'file' => UploadedFile::fake()->image('photo1.jpg')
+        ])->assertForbidden();
+});
+
+test('Cannot upload file bigger than 10 MB', function () {
+    $this->actingAs($this->user)
+        ->post(route('profile-image.store'), [
+            'file' => UploadedFile::fake()->image('photo1.jpg')->size(11000)
+        ])->assertInvalid();
+});
+
+test('Cannot upload not image file', function () {
+    $this->actingAs($this->user)
+        ->post(route('profile-image.store'), [
+            'file' => UploadedFile::fake()->create('sample.pdf', 1000, 'application/pdf')
+        ])->assertInvalid();
+});
