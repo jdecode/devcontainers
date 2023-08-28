@@ -48,7 +48,13 @@ class UserService
         $pathType = $thumbnail ? 'thumbnail_path' : 'path';
         $path = config("constants.user.profile_image.$pathType");
         $filename = $user->image_filename;
-        return $filename ? Storage::temporaryUrl($path . $filename, now()->addHour()) : null;
+        if (!$filename) {
+            return null;
+        }
+        if (Storage::providesTemporaryUrls()) {
+            return Storage::temporaryUrl($path . $filename, now()->addHour());
+        }
+        return $path . $filename;
     }
 
     public function deleteUserImage(User $user): void
@@ -73,13 +79,13 @@ class UserService
         $width = config('constants.user.profile_image.image_width_px');
         $height = config('constants.user.profile_image.image_height_px');
         $imageResized = $service->resizeImage($image, $width, $height);
-        $service->uploadImage($imageResized, $path . '/' . $filename);
+        $service->uploadImage($imageResized, $path . $filename);
 
         $thumbnailPath = config('constants.user.profile_image.thumbnail_path');
         $thumbnailWidth = config('constants.user.profile_image.thumbnail_width_px');
         $thumbnailHeight = config('constants.user.profile_image.thumbnail_height_px');
         $thumbnail = $service->resizeImage($image, $thumbnailWidth, $thumbnailHeight);
-        $service->uploadImage($thumbnail, $thumbnailPath . '/' . $filename);
+        $service->uploadImage($thumbnail, $thumbnailPath . $filename);
 
         if ($user->image_filename) {
             dispatch(new RemoveFileJob($path . $user->image_filename))->onQueue('default');
@@ -88,6 +94,12 @@ class UserService
 
         $user->update(['image_filename' => $filename]);
 
+        if (!Storage::providesTemporaryUrls()) {
+            return [
+                'image' => $path . $filename,
+                'thumbnail' => $thumbnailPath . $filename
+            ];
+        }
         return [
             'image' => Storage::temporaryUrl($path . $filename, now()->addHour()),
             'thumbnail' => Storage::temporaryUrl($thumbnailPath . $filename, now()->addHour())

@@ -35,6 +35,6 @@ class FileService
     public function uploadImage(Image $image, string $path): void
     {
         $imageStream = $image->stream()->__toString();
-        Storage::disk('s3')->put($path, $imageStream);
+        Storage::put($path, $imageStream);
     }
 }
