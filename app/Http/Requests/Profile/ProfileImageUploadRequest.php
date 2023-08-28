@@ -12,7 +12,7 @@ class ProfileImageUploadRequest extends FormRequest
             'file' => [
                 'required',
                 'file',
-                'mimes:jpeg,jpg,png,gif',
+                'mimes:jpeg,jpg,png',
                 'max:' . config('constants.user.profile_image.max_file_size')
             ]
         ];
