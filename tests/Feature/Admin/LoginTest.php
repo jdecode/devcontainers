@@ -1,13 +1,6 @@
 <?php
 
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
-
-beforeEach(function () {
-    $this->seed();
-});
 
 test('See login screen', function () {
     $this->get(route('admin.login'))

@@ -1,12 +1,6 @@
 <?php
 
-
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
-
 beforeEach(function () {
-    $this->seed();
     $this->admin = createSuperAdmin(password: 'Password@123');
     $this->user = createUser(password: 'Password@123');
 });

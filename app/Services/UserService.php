@@ -54,7 +54,7 @@ class UserService
         if (Storage::providesTemporaryUrls()) {
             return Storage::temporaryUrl($path . $filename, now()->addHour());
         }
-        return $path . $filename;
+        return Storage::url($path . $filename);
     }
 
     public function deleteUserImage(User $user): void
@@ -96,8 +96,8 @@ class UserService
 
         if (!Storage::providesTemporaryUrls()) {
             return [
-                'image' => $path . $filename,
-                'thumbnail' => $thumbnailPath . $filename
+                'image' => Storage::url($path . $filename),
+                'thumbnail' => Storage::url($thumbnailPath . $filename)
             ];
         }
         return [

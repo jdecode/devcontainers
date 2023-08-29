@@ -2,10 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
-
-uses(RefreshDatabase::class);
 
 test('Email can be verified', function () {
     $user = User::factory()->create([

@@ -1,12 +1,8 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 
-uses(RefreshDatabase::class);
-
 beforeEach(function () {
-    $this->seed();
     $this->user = createUser();
 });
 

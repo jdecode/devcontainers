@@ -1,13 +1,5 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
-
-beforeEach(function () {
-    $this->seed();
-});
-
 test('New users can register', function () {
     $response = $this->post(route('register'), [
         'first_name' => 'Test',

@@ -9,7 +9,9 @@ use Tests\TestCase;
 use function Pest\Laravel\assertAuthenticated;
 use function PHPUnit\Framework\assertEquals;
 
-uses(TestCase::class, RefreshDatabase::class)->in('Feature', 'Unit');
+uses(TestCase::class, RefreshDatabase::class)->beforeEach(function () {
+    $this->seed();
+})->in('Feature', 'Unit');
 
 expect()->extend(
     'toBeAuthenticated',
