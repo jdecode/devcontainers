@@ -32,7 +32,6 @@ class ResizeAndUploadImageJob implements ShouldQueue
     public function handle(): void
     {
         try {
-            $this->activity(Storage::getDefaultDriver());
             $fileService = new FileService();
             $image = Storage::disk('local')->get($this->imagePath);
             $imageResized = $fileService->resizeImage($image, $this->width, $this->height);
