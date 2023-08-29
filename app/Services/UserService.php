@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Exceptions\ForbiddenException;
 use App\Jobs\RemoveFileJob;
 use App\Jobs\ResizeAndUploadImageJob;
 use App\Jobs\VerifyEmailJob;
 use App\Models\User;
+use App\Traits\ActivityLog;
 use Config;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +15,8 @@ use Illuminate\Support\Facades\Storage;
 
 class UserService
 {
+    use ActivityLog;
+
     public function create(array $userInfo): User
     {
         return User::create(
@@ -71,6 +75,9 @@ class UserService
         $user->update(['image_filename' => null]);
     }
 
+    /**
+     * @throws ForbiddenException
+     */
     public function upsertUserImage(User $user, UploadedFile $image): array
     {
         $service = new FileService();
@@ -80,6 +87,9 @@ class UserService
         $width = config('constants.user.profile_image.image_width_px');
         $height = config('constants.user.profile_image.image_height_px');
         $temp = $image->storeAs('temp', 'org_' . $filename, 'local');
+        if (!$temp) {
+            throw new ForbiddenException('Cannot store temp user image on this server');
+        }
         dispatch(new ResizeAndUploadImageJob($temp, $width, $height, $path . $filename, Storage::getDefaultDriver()))
             ->onQueue('default');
 
@@ -87,6 +97,9 @@ class UserService
         $thumbnailWidth = config('constants.user.profile_image.thumbnail_width_px');
         $thumbnailHeight = config('constants.user.profile_image.thumbnail_height_px');
         $tempThumb = $image->storeAs('temp', 'thumb_' . $filename, 'local');
+        if (!$tempThumb) {
+            throw new ForbiddenException('Cannot store temp user image on this server');
+        }
         dispatch(new ResizeAndUploadImageJob(
             $tempThumb,
             $thumbnailWidth,

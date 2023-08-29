@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\ForbiddenException;
 use App\Services\FileService;
 use App\Traits\ActivityLog;
 use Illuminate\Bus\Queueable;
@@ -34,6 +35,9 @@ class ResizeAndUploadImageJob implements ShouldQueue
         try {
             $fileService = new FileService();
             $image = Storage::disk('local')->get($this->imagePath);
+            if (!$image) {
+                throw new ForbiddenException('Cannot get file on this server');
+            }
             $imageResized = $fileService->resizeImage($image, $this->width, $this->height);
             $fileService->uploadImage($imageResized, $this->filepath, $this->disk);
             Storage::disk('local')->delete($this->imagePath);
