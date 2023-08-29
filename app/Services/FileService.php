@@ -12,9 +12,9 @@ class FileService
 {
     use ActivityLog;
 
-    public function resizeImage(UploadedFile $image, int $width, int $height): Image
+    public function resizeImage($image, int $width, int $height): Image
     {
-        $image = FacadeImage::make($image->getContent());
+        $image = FacadeImage::make($image);
         if ($image->width() > $width || $image->height() > $height) {
             return FacadeImage::make($image)->resize($width, $height, function ($constraint) {
                 $constraint->aspectRatio();
@@ -32,9 +32,12 @@ class FileService
         return $filename;
     }
 
-    public function uploadImage(Image $image, string $path): void
+    public function uploadImage(Image $image, string $path, ?string $disk = null): void
     {
+        if (!$disk) {
+            $disk = Storage::getDefaultDriver();
+        }
         $imageStream = $image->stream()->__toString();
-        Storage::put($path, $imageStream);
+        Storage::disk($disk)->put($path, $imageStream);
     }
 }

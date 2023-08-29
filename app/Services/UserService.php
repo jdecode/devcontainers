@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\RemoveFileJob;
+use App\Jobs\ResizeAndUploadImageJob;
 use App\Jobs\VerifyEmailJob;
 use App\Models\User;
 use Config;
@@ -78,14 +79,21 @@ class UserService
         $path = config('constants.user.profile_image.path');
         $width = config('constants.user.profile_image.image_width_px');
         $height = config('constants.user.profile_image.image_height_px');
-        $imageResized = $service->resizeImage($image, $width, $height);
-        $service->uploadImage($imageResized, $path . $filename);
+        $temp = $image->storeAs('temp', 'org_' . $filename, 'local');
+        dispatch(new ResizeAndUploadImageJob($temp, $width, $height, $path . $filename, Storage::getDefaultDriver()))
+            ->onQueue('default');
 
         $thumbnailPath = config('constants.user.profile_image.thumbnail_path');
         $thumbnailWidth = config('constants.user.profile_image.thumbnail_width_px');
         $thumbnailHeight = config('constants.user.profile_image.thumbnail_height_px');
-        $thumbnail = $service->resizeImage($image, $thumbnailWidth, $thumbnailHeight);
-        $service->uploadImage($thumbnail, $thumbnailPath . $filename);
+        $tempThumb = $image->storeAs('temp', 'thumb_' . $filename, 'local');
+        dispatch(new ResizeAndUploadImageJob(
+            $tempThumb,
+            $thumbnailWidth,
+            $thumbnailHeight,
+            $thumbnailPath . $filename,
+            Storage::getDefaultDriver()
+        ))->onQueue('default');
 
         if ($user->image_filename) {
             dispatch(new RemoveFileJob($path . $user->image_filename))->onQueue('default');
