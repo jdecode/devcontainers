@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Traits\ActivityLog;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Image;
 use Intervention\Image\Facades\Image as FacadeImage;
