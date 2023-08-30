@@ -2,15 +2,11 @@
 
 namespace App\Services;
 
-use App\Enums\ProfileImageUploadStatusEnum;
-use App\Exceptions\ForbiddenException;
 use App\Jobs\RemoveFileJob;
-use App\Jobs\ProfileImageJob;
 use App\Jobs\VerifyEmailJob;
 use App\Models\User;
 use App\Traits\ActivityLog;
 use Config;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
