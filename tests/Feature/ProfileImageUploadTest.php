@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ProfileImageUploadStatusEnum;
 use Illuminate\Http\UploadedFile;
 
 beforeEach(function () {
@@ -11,21 +12,21 @@ afterEach(function () {
 });
 
 test('Upload and delete profile image', function () {
-    $response = $this->actingAs($this->user)
+    $this->actingAs($this->user)
         ->post(route('profile-image.store'), [
             'file' => UploadedFile::fake()->image('photo1.jpg')
         ])
-        ->assertOk()
+        ->assertAccepted()
         ->assertJsonStructure([
-            'data' => [
-                'image',
-                'thumbnail'
-            ],
+            'data',
             'message'
         ]);
-    $data = $response->decodeResponseJson();
-    Storage::assertExists($data['data']['image']);
-    Storage::assertExists($data['data']['thumbnail']);
+    $path = config('constants.user.profile_image.image_params.path');
+    $thumbnailPath = config('constants.user.profile_image.thumbnail_params.path');
+    $filename = $this->user->image_filename;
+
+    Storage::assertExists($path . $filename);
+    Storage::assertExists($thumbnailPath . $filename);
 
     $this->actingAs($this->user)
         ->delete(route('profile-image.destroy'))
@@ -53,4 +54,24 @@ test('Cannot upload not image file', function () {
         ->post(route('profile-image.store'), [
             'file' => UploadedFile::fake()->create('sample.pdf', 1000, 'application/pdf')
         ])->assertInvalid();
+});
+
+test('Image status should return null', function () {
+    $this->actingAs($this->user)
+        ->get(route('profile-image.status'))
+        ->assertOk()
+        ->assertJson(['data' => ['status' => null], 'message' => '']);
+});
+
+test('Image status should return processing', function () {
+    $this->actingAs($this->user)
+        ->post(route('profile-image.store'), [
+            'file' => UploadedFile::fake()->image('photo1.jpg')
+        ]);
+
+    $response = $this->actingAs($this->user)
+        ->get(route('profile-image.status'))
+        ->assertOk();
+    $json = $response->decodeResponseJson();
+    expect($json['data']['status'])->toBe(ProfileImageUploadStatusEnum::PROCESSING->value);
 });

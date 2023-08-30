@@ -31,6 +31,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         ->name('profile-image.store');
     Route::delete('/profile/image', [ProfileImageController::class, 'destroy'])
         ->name('profile-image.destroy');
+    Route::get('/profile/image/status', [ProfileImageController::class, 'status'])
+        ->name('profile-image.status');
 });
 
 Route::get('/', function () {

@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\ProfileImageUploadStatusEnum;
 use App\Exceptions\ForbiddenException;
 use App\Jobs\RemoveFileJob;
-use App\Jobs\ResizeAndUploadImageJob;
+use App\Jobs\ProfileImageJob;
 use App\Jobs\VerifyEmailJob;
 use App\Models\User;
 use App\Traits\ActivityLog;
@@ -50,8 +51,8 @@ class UserService
 
     public function getUserImage(User $user, bool $thumbnail = false): ?string
     {
-        $pathType = $thumbnail ? 'thumbnail_path' : 'path';
-        $path = config("constants.user.profile_image.$pathType");
+        $type = $thumbnail ? 'thumbnail_params' : 'image_params';
+        $path = config("constants.user.profile_image.$type.path");
         $filename = $user->image_filename;
         if (!$filename) {
             return null;
@@ -72,54 +73,9 @@ class UserService
             dispatch(new RemoveFileJob($thumbnailPath . '/' . $user->image_filename))->onQueue('default');
         }
 
-        $user->update(['image_filename' => null]);
-    }
-
-    /**
-     * @throws ForbiddenException
-     */
-    public function upsertUserImage(User $user, UploadedFile $image): array
-    {
-        $service = new FileService();
-        $ext = $image->getClientOriginalExtension();
-        $filename = $service->randomFilename($ext);
-        $path = config('constants.user.profile_image.path');
-        $width = config('constants.user.profile_image.image_width_px');
-        $height = config('constants.user.profile_image.image_height_px');
-        $temp = $service->tempStore($image, $filename);
-        if (!$temp) {
-            throw new ForbiddenException('Cannot store temp user image on this server');
-        }
-        dispatch(new ResizeAndUploadImageJob($temp, $width, $height, $path . $filename))
-            ->onQueue('default');
-
-        $thumbnailPath = config('constants.user.profile_image.thumbnail_path');
-        $thumbnailWidth = config('constants.user.profile_image.thumbnail_width_px');
-        $thumbnailHeight = config('constants.user.profile_image.thumbnail_height_px');
-        dispatch(new ResizeAndUploadImageJob(
-            $temp,
-            $thumbnailWidth,
-            $thumbnailHeight,
-            $thumbnailPath . $filename,
-            true
-        ))->onQueue('default');
-
-        if ($user->image_filename) {
-            dispatch(new RemoveFileJob($path . $user->image_filename))->onQueue('default');
-            dispatch(new RemoveFileJob($thumbnailPath . $user->image_filename))->onQueue('default');
-        }
-
-        $user->update(['image_filename' => $filename]);
-
-        if (!Storage::providesTemporaryUrls()) {
-            return [
-                'image' => Storage::url($path . $filename),
-                'thumbnail' => Storage::url($thumbnailPath . $filename)
-            ];
-        }
-        return [
-            'image' => Storage::temporaryUrl($path . $filename, now()->addHour()),
-            'thumbnail' => Storage::temporaryUrl($thumbnailPath . $filename, now()->addHour())
-        ];
+        $user->update([
+            'image_filename' => null,
+            'image_upload_status' => null
+        ]);
     }
 }

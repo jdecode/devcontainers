@@ -20,7 +20,7 @@ return [
         'deleted' => 'Profile deleted successfully.',
         'remove_account_confirmation' => 'Are you sure you want to delete your account?',
         'remove_account_consequences' => 'Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.',
-        'profile_image_upload_success' => "Profile image uploaded successfully",
+        'profile_image_accepted' => "Profile image accepted",
         'profile_image_upload_fail' => "Profile image upload failed",
         'profile_image_delete_success' => "Profile image deleted successfully",
         'profile_image_delete_fail' => "Profile image delete failed",
