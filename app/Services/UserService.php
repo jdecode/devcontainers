@@ -86,26 +86,22 @@ class UserService
         $path = config('constants.user.profile_image.path');
         $width = config('constants.user.profile_image.image_width_px');
         $height = config('constants.user.profile_image.image_height_px');
-        $temp = $image->storeAs('temp', 'org_' . $filename, 'local');
+        $temp = $service->tempStore($image, $filename);
         if (!$temp) {
             throw new ForbiddenException('Cannot store temp user image on this server');
         }
-        dispatch(new ResizeAndUploadImageJob($temp, $width, $height, $path . $filename, Storage::getDefaultDriver()))
+        dispatch(new ResizeAndUploadImageJob($temp, $width, $height, $path . $filename))
             ->onQueue('default');
 
         $thumbnailPath = config('constants.user.profile_image.thumbnail_path');
         $thumbnailWidth = config('constants.user.profile_image.thumbnail_width_px');
         $thumbnailHeight = config('constants.user.profile_image.thumbnail_height_px');
-        $tempThumb = $image->storeAs('temp', 'thumb_' . $filename, 'local');
-        if (!$tempThumb) {
-            throw new ForbiddenException('Cannot store temp user image on this server');
-        }
         dispatch(new ResizeAndUploadImageJob(
-            $tempThumb,
+            $temp,
             $thumbnailWidth,
             $thumbnailHeight,
             $thumbnailPath . $filename,
-            Storage::getDefaultDriver()
+            true
         ))->onQueue('default');
 
         if ($user->image_filename) {

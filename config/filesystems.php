@@ -13,7 +13,8 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'local'),
+    'default' => env('FILESYSTEM_DISK', 'public'),
+    'default_temp' => env('TEMP_FILESYSTEM_DISK', 'local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,7 +33,7 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => storage_path('app/'),
             'throw' => false,
         ],
 
@@ -80,4 +81,9 @@ return [
         public_path('storage') => storage_path('app/public'),
     ],
 
+    /*
+     * OTHER
+     */
+
+    'temp_path' => 'temp',
 ];

@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Exceptions\ForbiddenException;
 use App\Services\FileService;
 use App\Traits\ActivityLog;
 use Illuminate\Bus\Queueable;
@@ -21,26 +20,30 @@ class ResizeAndUploadImageJob implements ShouldQueue
     use SerializesModels;
     use ActivityLog;
 
+    private string $disk;
+    private string $temp;
+
     public function __construct(
-        private readonly string $imagePath,
+        private readonly string $tempPath,
         private readonly int $width,
         private readonly int $height,
         private readonly string $filepath,
-        private readonly string $disk,
+        private readonly bool $removeTemp = false
     ) {
+        $this->disk = config('filesystems.default');
+        $this->temp = config('filesystems.default_temp');
     }
 
     public function handle(): void
     {
         try {
             $fileService = new FileService();
-            $image = Storage::disk('local')->get($this->imagePath);
-            if (!$image) {
-                throw new ForbiddenException('Cannot get file on this server');
-            }
-            $imageResized = $fileService->resizeImage($image, $this->width, $this->height);
+            $tempFile = Storage::disk($this->temp)->get($this->tempPath);
+            $imageResized = $fileService->resizeImage($tempFile, $this->width, $this->height);
             $fileService->uploadImage($imageResized, $this->filepath, $this->disk);
-            Storage::disk('local')->delete($this->imagePath);
+            if ($this->removeTemp) {
+                Storage::disk($this->temp)->delete($this->temp);
+            }
         } catch (Throwable $throwable) {
             $this->activity(log: 'Profile image upload fail', properties: ['message' => $throwable->getMessage()]);
         }

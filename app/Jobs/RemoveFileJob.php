@@ -18,14 +18,22 @@ class RemoveFileJob implements ShouldQueue
     use SerializesModels;
     use ActivityLog;
 
-    public function __construct(private readonly string $filename)
+    private string $disk;
+
+    public function __construct(private readonly string $filename, private readonly bool $temp = false)
     {
+        $this->disk = config('filesystems.default');
+        if ($this->temp) {
+            $this->disk = config('filesystems.default_temp');
+        }
     }
 
     public function handle(): void
     {
-        if (Storage::exists($this->filename)) {
-            Storage::delete($this->filename);
+        $tempPath = config('filesystems.temp_path');
+        $path = $this->temp ? $tempPath . '/' . $this->filename : $this->filename;
+        if (Storage::disk($this->disk)->exists($path)) {
+            Storage::disk($this->disk)->delete($path);
             return;
         }
         $this->activity(log: 'Cannot remove file', properties: ['message' => "file $this->filename does not exists"]);
