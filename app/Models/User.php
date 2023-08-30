@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProfileImageUploadStatusEnum;
 use App\Services\UserService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -63,6 +64,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'remember_token',
                 'created_at',
                 'updated_at',
+                'image_upload_status'
             ]);
     }
 
@@ -74,6 +76,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'trial_ends_at' => 'date',
+        'image_upload_status' => ProfileImageUploadStatusEnum::class
     ];
 
     protected static function booted(): void
