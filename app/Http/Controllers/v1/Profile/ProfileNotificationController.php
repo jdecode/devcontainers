@@ -50,14 +50,14 @@ class ProfileNotificationController extends Controller
         if ($notifications->isEmpty()) {
             return $this->response(
                 [],
-                __('messages.profile.profile_notifications_update_fail'),
+                __('messages.profile.notification.update_fail'),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
         $notifications->each(fn ($notification) => $notification->markAsRead());
         return $this->response(
             ['ids' => $notifications->pluck('id')],
-            __('messages.profile.profile_notifications_update_success')
+            __('messages.profile.notification.update_success')
         );
     }
 }

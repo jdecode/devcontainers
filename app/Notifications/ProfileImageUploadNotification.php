@@ -31,17 +31,17 @@ class ProfileImageUploadNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject('Kindly request')
+            ->subject(__('messages.profile.image.notification.not_set_yet_title'))
             ->greeting("Hello $notifiable->full_name!")
-            ->line('You haven’t updated your profile picture, login and let other users see what you look like')
-            ->line('Thank you for using our application!');
+            ->line(__('messages.profile.image.notification.not_set_yet'))
+            ->line(__('messages.profile.image.notification.thank_you'));
     }
 
     public function toArray(): array
     {
         return [
-            'title' => 'Kindly request',
-            'message' => 'You haven’t updated your profile picture, login and let other users see what you look like'
+            'title' => __('messages.profile.image.notification.not_set_yet_title'),
+            'message' => __('messages.profile.image.notification.not_set_yet')
         ];
     }
 

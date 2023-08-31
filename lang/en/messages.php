@@ -20,13 +20,19 @@ return [
         'deleted' => 'Profile deleted successfully.',
         'remove_account_confirmation' => 'Are you sure you want to delete your account?',
         'remove_account_consequences' => 'Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.',
-        'profile_image_accepted' => "Profile image accepted",
-        'profile_image_upload_fail' => "Profile image upload failed",
-        'profile_image_delete_success' => "Profile image deleted successfully",
-        'profile_image_delete_fail' => "Profile image delete failed",
-        'profile_notifications_load_success' => "Notifications loaded successfully",
-        'profile_notifications_update_success' => "Notification(s) updated successfully",
-        'profile_notifications_update_fail' => "Notification update failed"
+        'image' => [
+            'accepted' => "Profile image accepted",
+            'upload_fail' => "Profile image upload failed",
+            'delete_success' => "Profile image deleted successfully",
+            'delete_fail' => "Profile image delete failed",
+            'notification' => [
+                'update_success' => "Notification(s) updated successfully",
+                'update_fail' => "Notification update failed",
+                'not_set_yet' => 'You haven’t updated your profile picture, login and let other users see what you look like',
+                'thank_you' => 'Thank you for using our application!',
+                'not_set_yet_title' => 'Kindly request'
+            ]
+        ]
     ],
     'subscription' => [
         'no_subscription' => 'No subscription',

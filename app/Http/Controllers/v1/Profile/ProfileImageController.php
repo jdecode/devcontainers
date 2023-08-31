@@ -27,7 +27,7 @@ class ProfileImageController extends Controller
 
             return $this->response(
                 [],
-                __('messages.profile.profile_image_accepted'),
+                __('messages.profile.image.accepted'),
                 Response::HTTP_ACCEPTED
             );
         } catch (Throwable $throwable) {
@@ -36,7 +36,7 @@ class ProfileImageController extends Controller
 
             return $this->response(
                 [],
-                __('messages.profile.profile_image_upload_fail'),
+                __('messages.profile.image.upload_fail'),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -49,14 +49,14 @@ class ProfileImageController extends Controller
             $service = new UserService();
             $service->deleteUserImage($user);
 
-            return $this->response(message: __('messages.profile.profile_image_delete_success'));
+            return $this->response(message: __('messages.profile.image.delete_success'));
         } catch (Throwable $throwable) {
             $user = Auth::user();
             $this->activity('Delete profile image failed', $user, $user, ['message' => $throwable->getMessage()]);
 
             return $this->response(
                 [],
-                __('messages.profile.profile_image_delete_fail'),
+                __('messages.profile.image.delete_fail'),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
