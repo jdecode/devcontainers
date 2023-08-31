@@ -31,7 +31,7 @@ class ProfileController extends Controller
             $user->save();
             Auth::logout();
             return Redirect::route('admin.login')
-                ->withErrors(['email' => __('messages.errors.check_inbox_and_verify')]);
+                ->withErrors(['email' => __('messages.error.check_inbox_and_verify')]);
         }
         $user->save();
         return Redirect::route('admin.profile.edit')->with('status', 'profile-updated');

@@ -24,6 +24,9 @@ return [
         'profile_image_upload_fail' => "Profile image upload failed",
         'profile_image_delete_success' => "Profile image deleted successfully",
         'profile_image_delete_fail' => "Profile image delete failed",
+        'profile_notifications_load_success' => "Notifications loaded successfully",
+        'profile_notifications_update_success' => "Notification(s) updated successfully",
+        'profile_notifications_update_fail' => "Notification update failed"
     ],
     'subscription' => [
         'no_subscription' => 'No subscription',
@@ -36,8 +39,8 @@ return [
         'successfully_deleted' => 'Successfully deleted!',
         'fail' => 'Fail!'
     ],
-    'errors' => [
+    'error' => [
         'no_rights_to_dashboard' => 'You have no rights to login to Dashboard',
         'check_inbox_and_verify' => 'Check your inbox and verify e-mail'
-    ]
+    ],
 ];

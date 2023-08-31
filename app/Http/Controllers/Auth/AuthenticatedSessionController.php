@@ -10,6 +10,7 @@ use App\Traits\HttpResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -25,7 +26,7 @@ class AuthenticatedSessionController extends Controller
 
             return $this->response(
                 message: __('auth.email_verification'),
-                httpCode: 403
+                httpCode: Response::HTTP_FORBIDDEN
             );
         }
         $token = $user->createToken(request()->userAgent())->plainTextToken;

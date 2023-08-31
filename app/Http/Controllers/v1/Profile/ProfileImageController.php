@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\v1;
+namespace App\Http\Controllers\v1\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\ProfileImageUploadRequest;
@@ -10,6 +10,7 @@ use App\Traits\ActivityLog;
 use App\Traits\HttpResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class ProfileImageController extends Controller
@@ -24,12 +25,20 @@ class ProfileImageController extends Controller
             $user = Auth::user();
             dispatch(new ProfileImageJob($image, $user))->onQueue('default');
 
-            return $this->response([], __('messages.profile.profile_image_accepted'), 202);
+            return $this->response(
+                [],
+                __('messages.profile.profile_image_accepted'),
+                Response::HTTP_ACCEPTED
+            );
         } catch (Throwable $throwable) {
             $user = Auth::user();
             $this->activity($throwable->getMessage(), $user, $user, ['trace' => $throwable->getTraceAsString()]);
 
-            return $this->response([], __('messages.profile.profile_image_upload_fail'), 500);
+            return $this->response(
+                [],
+                __('messages.profile.profile_image_upload_fail'),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 
@@ -45,7 +54,11 @@ class ProfileImageController extends Controller
             $user = Auth::user();
             $this->activity('Delete profile image failed', $user, $user, ['message' => $throwable->getMessage()]);
 
-            return $this->response([], __('messages.profile.profile_image_delete_fail'), 500);
+            return $this->response(
+                [],
+                __('messages.profile.profile_image_delete_fail'),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 

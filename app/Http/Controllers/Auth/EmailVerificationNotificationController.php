@@ -27,7 +27,6 @@ class EmailVerificationNotificationController extends Controller
         }
 
         $user->sendEmailVerificationNotification();
-
         return $this->response(
             ['status' => 'verification-link-sent'],
             'Verification link sent'

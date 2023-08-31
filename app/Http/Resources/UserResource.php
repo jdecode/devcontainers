@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'updated_at' => $this->updated_at,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
+            'initials' => $this->initials,
             'roles' => $this->roles->pluck('name'),
             'has_subscribed' => $this->subscribed(),
             'image' => $this->image,

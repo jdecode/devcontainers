@@ -31,7 +31,7 @@ class LoginController extends Controller
 
             return redirect()
                 ->back()
-                ->withErrors(['email' => __('messages.errors.no_rights_to_dashboard')]);
+                ->withErrors(['email' => __('messages.error.no_rights_to_dashboard')]);
         }
         $request->session()->regenerate();
         $this->activity('Dashboard Log in', $user, $user);

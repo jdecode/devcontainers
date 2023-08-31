@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\v1;
+namespace App\Http\Controllers\v1\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Services\SubscriptionService;

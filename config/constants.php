@@ -30,5 +30,8 @@ return [
             ],
             'max_file_size' => 10240,
         ]
+    ],
+    'pagination' => [
+        'default_per_page' => 10,
     ]
 ];

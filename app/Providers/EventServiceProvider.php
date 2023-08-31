@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Listeners\NoProfileImageListener;
 use App\Listeners\StripeEventListener;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Laravel\Cashier\Events\WebhookReceived;
@@ -21,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         WebhookReceived::class => [
             StripeEventListener::class,
+        ],
+        Verified::class => [
+            NoProfileImageListener::class,
         ],
     ];
 

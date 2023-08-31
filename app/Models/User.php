@@ -88,6 +88,13 @@ class User extends Authenticatable implements MustVerifyEmail
         }));
     }
 
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => trim($this->first_name . ' ' . $this->last_name)
+        );
+    }
+
     protected function image(): Attribute
     {
         return Attribute::make(
@@ -99,6 +106,24 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return Attribute::make(
             get: fn () => (new UserService())->getUserImage($this, true)
+        );
+    }
+
+    protected function initials(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $firstLetter = $this->first_name ? mb_strtoupper($this->first_name[0]) : 'X';
+                $secondLetter = 'X';
+                if ($this->last_name) {
+                    $secondLetter = mb_strtoupper($this->last_name[0]);
+                } elseif ($this->first_name && strlen($this->first_name) > 1) {
+                    $secondLetter = $this->first_name[1];
+                }
+                $firstLetter = $firstLetter === '?' ? 'X' : $firstLetter;
+                $secondLetter = $secondLetter === '?' ? 'X' : $secondLetter;
+                return $firstLetter . $secondLetter;
+            }
         );
     }
 }
