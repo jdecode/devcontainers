@@ -42,7 +42,7 @@ class ProfileImageController extends Controller
         }
     }
 
-    public function destroy()
+    public function destroy(): JsonResponse
     {
         try {
             $user = Auth::user();
@@ -62,7 +62,7 @@ class ProfileImageController extends Controller
         }
     }
 
-    public function status()
+    public function status(): JsonResponse
     {
         return $this->response(['status' => Auth::user()->image_upload_status]);
     }

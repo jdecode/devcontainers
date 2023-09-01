@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateProfileNotificationRequest;
 use App\Traits\ActivityLog;
 use App\Traits\HttpResponse;
 use Auth;
+use Illuminate\Http\JsonResponse;
 use Str;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,7 +17,7 @@ class ProfileNotificationController extends Controller
     use HttpResponse;
     use ActivityLog;
 
-    public function show(UserNotificationRequest $request)
+    public function show(UserNotificationRequest $request): array
     {
         $user = Auth::user();
         $notificationsQuery = $user->notifications()->orderByDesc('created_at');
@@ -38,7 +39,7 @@ class ProfileNotificationController extends Controller
         return $notifications;
     }
 
-    public function update(UpdateProfileNotificationRequest $request)
+    public function update(UpdateProfileNotificationRequest $request): JsonResponse
     {
         $user = Auth::user();
         $notificationId = $request->validated('id');
@@ -50,14 +51,14 @@ class ProfileNotificationController extends Controller
         if ($notifications->isEmpty()) {
             return $this->response(
                 [],
-                __('messages.profile.notification.update_fail'),
+                __('messages.profile.image.notification.update_fail'),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
-        $notifications->each(fn ($notification) => $notification->markAsRead());
+        $notificationsQuery->update(['read_at' => now()]);
         return $this->response(
             ['ids' => $notifications->pluck('id')],
-            __('messages.profile.notification.update_success')
+            __('messages.profile.image.notification.update_success')
         );
     }
 }
