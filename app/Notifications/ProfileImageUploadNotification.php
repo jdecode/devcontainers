@@ -19,7 +19,7 @@ class ProfileImageUploadNotification extends Notification implements ShouldQueue
     {
         return [
             'database' => now(),
-            'mail' => now()->addHour()
+            'mail' => now()->addMinutes(10)
         ];
     }
 
