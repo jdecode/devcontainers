@@ -180,6 +180,10 @@ img {
     text-decoration: underline;
 }
 
+.confidential {
+    font-size: 10px;
+}
+
 /* Tables */
 
 .table table {

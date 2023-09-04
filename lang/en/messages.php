@@ -49,4 +49,8 @@ return [
         'no_rights_to_dashboard' => 'You have no rights to login to Dashboard',
         'check_inbox_and_verify' => 'Check your inbox and verify e-mail'
     ],
+    'mail' => [
+        'confidential' => 'This email is confidential. If you have received it in error, please delete it. The contents of this email do not constitute a commitment by Founder and Lightning, unless separately endorsed by an authorised representative of Founder and Lightning. Although Founder and Lightning takes care to protect our systems from electronic virus attacks, we give no warranty that this email message (including any attachments) is free of any virus or other harmful matter and accept no responsibility for loss or damage resulting from the recipient receiving or opening an email from us. If you think that an email purportedly sent by the business is suspicious, please contact Founder and Lightning to verify if the email is legitimate. Founder and Lightning is the trading name of ucreate Limited, a company registered in England and Wales (Company No. 08503849) at Dalton House, 60 Windsor Avenue, London, England, SW19 2RR. Our Privacy Policy may be viewed here',
+        'privacy_policy' => 'Privacy Policy'
+    ]
 ];
