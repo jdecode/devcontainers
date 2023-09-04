@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\UserService;
 use App\ValueObjects\Admin\NotificationVO;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -99,8 +100,9 @@ class UserController extends Controller
 
     public function verifyEmail(User $user): RedirectResponse
     {
-        $user->email_verified_at = now();
-        $user->save();
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
 
         return Redirect::route('admin.users.index', $user)->with(
             'notification',
