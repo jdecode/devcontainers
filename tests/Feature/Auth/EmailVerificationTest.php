@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Notifications\ProfileImageUploadNotification;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Arr;
 
