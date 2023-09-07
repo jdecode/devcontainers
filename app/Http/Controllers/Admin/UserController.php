@@ -24,16 +24,16 @@ class UserController extends Controller
 {
     public function index(UserListRequest $request): View
     {
-
         $sortBy = $request->validated('sortBy') ?? 'id';
         $orderBy = $request->validated('orderBy') ?? 'asc';
+        $perPage = $request->validated('perPage', config('constants.pagination.default_per_page'));
 
         return view('users.list', [
             'users' => UserResource::collection(
                 User::orderBy($sortBy, $orderBy)
-                    ->paginate(10)
+                    ->paginate($perPage)
                     ->withQueryString()
-            ),
+            )
         ]);
     }
 

@@ -1,11 +1,12 @@
 <?php
 
-use App\Models\User;
+beforeEach(function () {
+    $this->user = createUser();
+});
 
 test('Get profile', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user)
-        ->get(route('profile.update', $user))
+    $this->actingAs($this->user)
+        ->get(route('profile.update', $this->user))
         ->assertOk()
         ->assertJsonStructure([
             'data' => [
@@ -21,8 +22,7 @@ test('Get profile', function () {
 });
 
 test('Update profile', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user)
+    $this->actingAs($this->user)
         ->patch(route('profile.update'), ['first_name' => 'Test123',])
         ->assertOk()
         ->assertSee(__('messages.profile.updated'))
@@ -46,8 +46,7 @@ test('Update profile', function () {
 });
 
 test('Update profile email', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user)
+    $this->actingAs($this->user)
         ->patch(route('profile.update'), ['email' => 'test123@founderandlightning.com'])
         ->assertOk()
         ->assertSee(__('messages.profile.updated'))
@@ -72,12 +71,11 @@ test('Update profile email', function () {
 });
 
 test('Delete profile', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user)
+    $this->actingAs($this->user)
         ->delete(route('profile.destroy'))
         ->assertOk()
         ->assertSee(__('messages.profile.deleted'));
     $this->assertDatabaseMissing('users', [
-        'id' => $user->id,
+        'id' => $this->user->id,
     ]);
 });

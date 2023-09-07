@@ -11,7 +11,8 @@ class UserListRequest extends FormRequest
     {
         return [
             'sortBy' => ['sometimes', Rule::in(['id', 'first_name', 'last_name', 'email', 'email_verified_at'])],
-            'orderBy' => ['sometimes', Rule::in(['asc', 'desc'])]
+            'orderBy' => ['sometimes', Rule::in(['asc', 'desc'])],
+            'perPage' => ['sometimes', 'integer']
         ];
     }
 }

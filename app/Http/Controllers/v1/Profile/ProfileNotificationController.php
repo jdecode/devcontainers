@@ -5,11 +5,12 @@ namespace App\Http\Controllers\v1\Profile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\UserNotificationRequest;
 use App\Http\Requests\UpdateProfileNotificationRequest;
+use App\Http\Resources\NotificationResource;
 use App\Traits\ActivityLog;
 use App\Traits\HttpResponse;
 use Auth;
 use Illuminate\Http\JsonResponse;
-use Str;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProfileNotificationController extends Controller
@@ -17,7 +18,7 @@ class ProfileNotificationController extends Controller
     use HttpResponse;
     use ActivityLog;
 
-    public function show(UserNotificationRequest $request): array
+    public function show(UserNotificationRequest $request): AnonymousResourceCollection
     {
         $user = Auth::user();
         $notificationsQuery = $user->notifications()->orderByDesc('created_at');
@@ -27,15 +28,9 @@ class ProfileNotificationController extends Controller
             $method = $status === 'read' ? 'whereNotNull' : 'whereNull';
             $notificationsQuery->$method('read_at');
         }
-        $notifications = $notificationsQuery
-            ->paginate($perPage, ['id', 'type', 'data', 'read_at', 'created_at']);
-        $notifications->map(fn ($item) => $item->type = Str::afterLast($item->type, '\\'));
-        $unreadCount = $notifications->total();
-        if ($status !== 'unread') {
-            $unreadCount = $user->notifications->whereNull('read_at')->count();
-        }
-        $notifications = $notifications->toArray();
-        $notifications['unread_count'] = $unreadCount;
+        $notifications = NotificationResource::collection($notificationsQuery->paginate($perPage));
+        $unreadCount = $user->notifications->whereNull('read_at')->count();
+        $notifications->additional(['unread_count' => $unreadCount]);
         return $notifications;
     }
 

@@ -7,27 +7,10 @@ beforeEach(function () {
 });
 
 test('Get Profile notifications', function () {
-    $response = $this->actingAs($this->user)
-        ->get(route('profile-notification.show'));
-    expect($response)
-        ->status()->toBe(200)
-        ->content()->toBeJson()
-        ->json()->toHaveKeys([
-            'current_page',
-            'data',
-            'first_page_url',
-            'from',
-            'last_page',
-            'last_page_url',
-            'links',
-            'next_page_url',
-            'path',
-            'per_page',
-            'prev_page_url',
-            'to',
-            'total',
-            'unread_count',
-        ]);
+    $this->actingAs($this->user)
+        ->get(route('profile-notification.show'))
+        ->assertOk()
+        ->assertResourcePagination();
 });
 
 test('Mark notification as read', function () {

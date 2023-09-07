@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
 use Pest\Expectation;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -11,7 +12,7 @@ use function PHPUnit\Framework\assertEquals;
 
 uses(TestCase::class, RefreshDatabase::class)->beforeEach(function () {
     $this->seed();
-})->in('Feature', 'Unit');
+})->in('./');
 
 expect()->extend(
     'toBeAuthenticated',
@@ -53,3 +54,25 @@ function getRoleUser(): Role
 {
     return Role::where('name', config('constants.roles.user'))->first();
 }
+
+TestResponse::macro('assertResourcePagination', function () {
+    $this->assertJsonStructure([
+        'data',
+        'links' => [
+            'first',
+            'last',
+            'prev',
+            'next'
+        ],
+        'meta' => [
+            'current_page',
+            'from',
+            'last_page',
+            'links',
+            'path',
+            'per_page',
+            'to',
+            'total'
+        ]
+    ]);
+});

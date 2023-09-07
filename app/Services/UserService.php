@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Http\Resources\UserResource;
 use App\Jobs\RemoveFileJob;
 use App\Jobs\VerifyEmailJob;
 use App\Models\User;
 use App\Traits\ActivityLog;
 use Config;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -73,5 +75,10 @@ class UserService
             'image_filename' => null,
             'image_upload_status' => null
         ]);
+    }
+
+    public function getAllUsers(): AnonymousResourceCollection
+    {
+        return UserResource::collection(User::all());
     }
 }
