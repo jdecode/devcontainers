@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientBuilder;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -13,7 +15,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(Client::class, function () {
+            return ClientBuilder::create()
+                ->setHosts(config('database.connections.elasticsearch.hosts'))
+                ->build();
+        });
     }
 
     /**

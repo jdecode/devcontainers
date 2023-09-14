@@ -4,9 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Notifications\DatabaseNotification;
 use Str;
 
-/** @mixin \Illuminate\Notifications\DatabaseNotification */
+/** @mixin DatabaseNotification */
 class NotificationResource extends JsonResource
 {
     /**

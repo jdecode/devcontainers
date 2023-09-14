@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ProfileImageUploadStatusEnum;
 use App\Services\UserService;
+use App\Traits\Searchable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasRoles;
     use Billable;
     use LogsActivity;
+    use Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -125,5 +127,14 @@ class User extends Authenticatable implements MustVerifyEmail
                 return $firstLetter . $secondLetter;
             }
         );
+    }
+
+    public function searchableAttributes(): array
+    {
+        return [
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'email' => $this->email
+        ];
     }
 }

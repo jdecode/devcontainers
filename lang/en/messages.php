@@ -13,6 +13,7 @@ return [
         'forgot_password_instruction' => 'Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.',
         'remove_account_confirmation' => 'Are you sure you want to delete this account?',
         'remove_account_consequences' => 'Once account is deleted, all of its resources and data will be permanently deleted.',
+        'search_error' => 'Search error'
     ],
     'profile' => [
         'updated' => 'Profile updated successfully.',
