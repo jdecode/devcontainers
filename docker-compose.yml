@@ -99,6 +99,8 @@ services:
 # On-disk storage of DB data, when containers are stopped
 volumes:
   lbp-pg-disk: {}
+  elasticsearch:
+    driver: local
 
 # Local network for services running using this docker-compose config
 networks:

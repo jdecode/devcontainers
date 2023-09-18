@@ -18,8 +18,6 @@ class ElasticsearchService
 
     public const MATCH_ALL = 'match_all';
 
-    public const ALL_INDICES = '_all';
-
     public const MAX_SIZE = 10000;
 
     public const DEFAULT_SEARCH_TYPE = 'query_string';
@@ -66,18 +64,6 @@ class ElasticsearchService
         return $this->searchOnElasticsearch($index, [], $query);
     }
 
-    /**
-     * Method allows to search across all elasticsearch indices
-     *
-     * @throws ClientResponseException
-     * @throws ServerResponseException
-     */
-    public function searchAll(?string $query, array $params = []): array
-    {
-        $this->setParams($params);
-        return $this->searchOnElasticsearch(self::ALL_INDICES, [], $query);
-    }
-
     private function setParams(array $params): void
     {
         $this->searchSize = self::MAX_SIZE;
@@ -107,6 +93,11 @@ class ElasticsearchService
         }
 
         return join(',', $index);
+    }
+
+    private function searchOnEloquent(array $models, array $fields, ?string $query)
+    {
+
     }
 
     /**
