@@ -95,7 +95,7 @@ return [
 
         'elasticsearch' => [
             'driver' => 'elasticsearch',
-            'enabled' => env('ELASTICSEARCH_ENABLED', true),
+            'enabled' => env('ELASTICSEARCH_ENABLED', false),
             'hosts' => [
                 env('ELASTICSEARCH_HOST', 'localhost') . ':' . env('ELASTICSEARCH_PORT', 9200)
             ],

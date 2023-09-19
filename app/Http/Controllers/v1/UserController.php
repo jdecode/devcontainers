@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserListRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Services\ElasticsearchService;
+use App\Services\SearchService;
 use App\Traits\ActivityLog;
 use App\Traits\HttpResponse;
 use Illuminate\Http\JsonResponse;
@@ -23,15 +23,14 @@ class UserController extends Controller
 
     public function index(
         UserListRequest $request,
-        ElasticsearchService $service
+        SearchService $service
     ): AnonymousResourceCollection|JsonResponse {
         $sortBy = $request->validated('sortBy');
         $orderBy = $request->validated('orderBy');
         $perPage = $request->validated('perPage', config('constants.pagination.default_per_page'));
         $search = $request->validated('search');
         try {
-            $items = $service->search(User::class, $search);
-            $builder = User::whereIn('id', Arr::pluck($items['data'], '_id'));
+            $builder = $service->search(User::class, $search);
             if ($sortBy && $orderBy) {
                 $builder->orderBy($sortBy, $orderBy);
             }
@@ -39,7 +38,12 @@ class UserController extends Controller
                 $builder->paginate($perPage)->withQueryString()
             );
         } catch (Throwable $throwable) {
-            $this->activity($throwable->getMessage(), Auth::user(), null, ['trace' => $throwable->getTraceAsString()]);
+            $this->activity(
+                __('messages.user.search_error'),
+                Auth::user(),
+                null,
+                ['message' => $throwable->getMessage(), 'trace' => $throwable->getTraceAsString()]
+            );
             return $this->response([], __('messages.user.search_error'), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

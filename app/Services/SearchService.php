@@ -2,35 +2,32 @@
 
 namespace App\Services;
 
-use App\Exceptions\ElasticsearchNotEnabledException;
+use App\Exceptions\NoSearchFieldException;
 use App\Exceptions\TraitNotUsedException;
 use App\Traits\Searchable;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use stdClass;
 
-class ElasticsearchService
+class SearchService
 {
-    private int $searchSize;
+    private int $searchSize = 10000;
 
-    private string $searchType;
+    private string $searchType = 'query_string';
+
+    private bool $elasticSearchEnabled;
+
+    private bool $partWordSearch = false;
 
     public const MATCH_ALL = 'match_all';
 
-    public const MAX_SIZE = 10000;
-
-    public const DEFAULT_SEARCH_TYPE = 'query_string';
-
-    /**
-     * @throws ElasticsearchNotEnabledException
-     */
     public function __construct(private readonly Client $elasticsearch)
     {
         $elasticSearchConfig = config('database.connections.elasticsearch');
-        if (!$elasticSearchConfig['enabled']) {
-            throw new ElasticsearchNotEnabledException('Elastic search is not enabled');
-        }
+        $this->elasticSearchEnabled = (bool) $elasticSearchConfig['enabled'];
     }
 
     /**
@@ -42,12 +39,17 @@ class ElasticsearchService
      * @throws ClientResponseException
      * @throws ServerResponseException
      * @throws TraitNotUsedException
+     * @throws NoSearchFieldException
      */
-    public function search(string $model, ?string $query, array $fields = [], array $params = []): array
+    public function search(string $model, ?string $query, array $fields = [], array $params = []): Builder
     {
-        $index = $this->verifyModelsAndPrepareIndex([$model]);
         $this->setParams($params);
-        return $this->searchOnElasticsearch($index, $fields, $query);
+        if ($this->elasticSearchEnabled) {
+            $index = $this->verifyModelsAndPrepareIndex([$model]);
+            $data = $this->searchOnElasticsearch($index, $fields, $query);
+            return $this->prepareBuilderFromElasticSearchResults($model, $data);
+        }
+        return $this->searchOnEloquent($model, $fields, $query);
     }
 
     /**
@@ -66,8 +68,6 @@ class ElasticsearchService
 
     private function setParams(array $params): void
     {
-        $this->searchSize = self::MAX_SIZE;
-        $this->searchType = self::DEFAULT_SEARCH_TYPE;
         if (!$params) {
             return;
         }
@@ -76,6 +76,9 @@ class ElasticsearchService
         }
         if (isset($params['search_type'])) {
             $this->searchType = $params['search_type'];
+        }
+        if (isset($params['part_word_search'])) {
+            $this->partWordSearch = (bool) $params['part_word_search'];
         }
     }
 
@@ -95,9 +98,26 @@ class ElasticsearchService
         return join(',', $index);
     }
 
-    private function searchOnEloquent(array $models, array $fields, ?string $query)
+    /**
+     * @throws NoSearchFieldException
+     */
+    private function searchOnEloquent(string $model, array $fields, ?string $query): Builder
     {
-
+        /** @var Builder $builder */
+        $builder = $model::query();
+        if (empty($fields)) {
+            $fields = array_keys((new $model())->searchableAttributes());
+        }
+        if (!$fields) {
+            throw new NoSearchFieldException('No fields to search');
+        }
+        if ($this->partWordSearch) {
+            foreach ($fields as $field) {
+                $builder->orWhere($field, 'ilike', '%' . $query . '%');
+            }
+            return $builder;
+        }
+        return $builder->whereFullText($fields, $query);
     }
 
     /**
@@ -119,12 +139,20 @@ class ElasticsearchService
         ];
     }
 
+    private function prepareBuilderFromElasticSearchResults(string $model, array $data): Builder
+    {
+        return $model::whereIn('id', Arr::pluck($data['data'], '_id'));
+    }
+
     private function query(array $fields, ?string $query): array
     {
         if (!$query) {
             return [self::MATCH_ALL => new stdClass()];
         }
-        $properties = ['query' => '*' . $query . '*'];
+        if ($this->partWordSearch) {
+            $query = '*' . $query . '*';
+        }
+        $properties = ['query' => $query];
         if ($fields) {
             $properties['fields'] = $fields;
         }
