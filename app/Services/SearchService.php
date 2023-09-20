@@ -10,6 +10,7 @@ use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use stdClass;
 
 class SearchService
@@ -20,9 +21,11 @@ class SearchService
 
     private bool $elasticSearchEnabled;
 
-    private bool $partWordSearch = false;
+    private bool $partWordSearch = true;
 
     public const MATCH_ALL = 'match_all';
+
+    private mixed $elasticsearchResults;
 
     public function __construct(private readonly Client $elasticsearch)
     {
@@ -44,6 +47,12 @@ class SearchService
     public function search(string $model, ?string $query, array $fields = [], array $params = []): Builder
     {
         $this->setParams($params);
+        if (empty($fields)) {
+            $fields = array_keys((new $model())->searchableAttributes());
+        }
+        if (!$fields) {
+            throw new NoSearchFieldException('No fields to search');
+        }
         if ($this->elasticSearchEnabled) {
             $index = $this->verifyModelsAndPrepareIndex([$model]);
             $data = $this->searchOnElasticsearch($index, $fields, $query);
@@ -105,12 +114,6 @@ class SearchService
     {
         /** @var Builder $builder */
         $builder = $model::query();
-        if (empty($fields)) {
-            $fields = array_keys((new $model())->searchableAttributes());
-        }
-        if (!$fields) {
-            throw new NoSearchFieldException('No fields to search');
-        }
         if ($this->partWordSearch) {
             foreach ($fields as $field) {
                 $builder->orWhere($field, 'ilike', '%' . $query . '%');
@@ -133,6 +136,7 @@ class SearchService
                 'query' => $this->query($fields, $query)
             ],
         ])->asArray();
+        $this->elasticsearchResults = $response['hits']['hits'];
         return [
             'total' => $response['hits']['total']['value'],
             'data' => $response['hits']['hits']
@@ -150,12 +154,30 @@ class SearchService
             return [self::MATCH_ALL => new stdClass()];
         }
         if ($this->partWordSearch) {
-            $query = '*' . $query . '*';
+            $words = explode(" ", $query);
+            $string = '';
+            foreach ($words as $word) {
+                $string .= '*' . $word . '* ';
+            }
+            $query = trim($string);
         }
         $properties = ['query' => $query];
         if ($fields) {
             $properties['fields'] = $fields;
         }
         return [$this->searchType => $properties];
+    }
+
+    public function applyElasticsearchOrderToCollection(Collection $collection)
+    {
+        $ids = Arr::pluck($this->elasticsearchResults, '_id');
+        $result = new Collection();
+        $collection = $collection->keyBy('id');
+        foreach ($ids as $id) {
+            if (isset($collection[$id])) {
+                $result[] = $collection[$id];
+            }
+        }
+        return $result;
     }
 }
