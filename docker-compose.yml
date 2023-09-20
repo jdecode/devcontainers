@@ -7,7 +7,7 @@ services:
     container_name: lbp-api
     depends_on:
       - lbp-pg
-      - lbp-es
+#      - lbp-es
     volumes:
       - .:/var/www/html
     restart: always
@@ -54,18 +54,18 @@ services:
       lbp-network:
         ipv4_address: 10.10.1.4
 
-  lbp-es:
-    image: elasticsearch:7.17.12
-    environment:
-      - discovery.type=single-node
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - elasticsearch:/usr/share/elasticsearch/data
-    networks:
-      lbp-network:
-        ipv4_address: 10.10.1.7
+#  lbp-es:
+#    image: elasticsearch:7.17.12
+#    environment:
+#      - discovery.type=single-node
+#    ports:
+#      - "9200:9200"
+#      - "9300:9300"
+#    volumes:
+#      - elasticsearch:/usr/share/elasticsearch/data
+#    networks:
+#      lbp-network:
+#        ipv4_address: 10.10.1.7
 
 #  lbp-0x:
 #    build:
