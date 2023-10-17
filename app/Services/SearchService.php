@@ -114,6 +114,9 @@ class SearchService
     {
         /** @var Builder $builder */
         $builder = $model::query();
+        if (!$query) {
+            return $builder;
+        }
         if ($this->partWordSearch) {
             foreach ($fields as $field) {
                 $builder->orWhere($field, 'ilike', '%' . $query . '%');
