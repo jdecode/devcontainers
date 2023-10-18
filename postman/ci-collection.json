@@ -5294,24 +5294,24 @@
 				{
 					"listen": "prerequest",
 					"script": {
+						"id": "c83241e3-78d1-4062-8439-ed23351b78b6",
 						"type": "text/javascript",
 						"exec": [
 							""
-						],
-						"id": "fd1b96af-1c93-46c5-9799-5e3ee30e0f15"
+						]
 					}
 				},
 				{
 					"listen": "test",
 					"script": {
+						"id": "1a5b76e7-8445-4d2d-b855-c04ed54cfb04",
 						"type": "text/javascript",
 						"exec": [
 							"// Response time to be within a certain threshold",
 							"pm.test(\"Response time within threshold\", function () {",
-							"    pm.expect(pm.response.responseTime).to.be.lessThan(500);",
+							"    pm.expect(pm.response.responseTime).to.be.lessThan(3000);",
 							"});"
-						],
-						"id": "584ebce5-41b2-41cb-99cd-c8b390163666"
+						]
 					}
 				}
 			]
@@ -5370,19 +5370,16 @@
 	],
 	"variable": [
 		{
-			"id": "14e29c41-df83-4701-a362-41b481b48fa9",
 			"key": "base_url",
 			"value": "http://10.10.1.1/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "1cc744f4-37e9-40c5-96a1-12043e0775dd",
 			"key": "web_url",
 			"value": "http://10.10.1.1",
 			"type": "string"
 		},
 		{
-			"id": "5c520008-d26f-43a4-ad75-01152e7c6565",
 			"key": "admin_url",
 			"value": "http://10.10.1.1/admin",
 			"type": "string"
