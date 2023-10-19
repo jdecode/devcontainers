@@ -18,13 +18,13 @@ jobs:
           command: docker-compose -f ci-docker-compose.yml up -d
       - run:
           name: CI checks
-          command: docker-compose -f ci-docker-compose.yml exec lbp-api composer run ci
+          command: docker-compose -f ci-docker-compose.yml exec devc-api composer run ci
       - run:
           name: Setup dev environment
-          command: docker-compose -f ci-docker-compose.yml exec lbp-api composer run dev
+          command: docker-compose -f ci-docker-compose.yml exec devc-api composer run dev
       - run:
           name: Postman tests
-          command: docker-compose -f ci-docker-compose.yml exec lbp-api postman collection run postman/ci-collection.json
+          command: docker-compose -f ci-docker-compose.yml exec devc-api postman collection run postman/ci-collection.json
 
   cd:
     machine:

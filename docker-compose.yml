@@ -1,60 +1,62 @@
 version : "3"
 services:
-  lbp-api:
+  devc-api:
     build:
       context: .
       dockerfile: dockerfiles/Api.Dockerfile
-    container_name: lbp-api
+    container_name: devc-api
     depends_on:
-      - lbp-pg
-#      - lbp-es
+      - devc-pg
+#      - devc-es
     volumes:
       - .:/var/www/html
     restart: always
     ports:
-      - "1010:80"
+      - "23102:80"
     networks:
-      lbp-network:
-        ipv4_address: 10.10.1.1
+      devc-network:
+        ipv4_address: 23.102.1.1
     extra_hosts:
       - host.docker.internal:host-gateway
 
-  lbp-pg:
+  devc-pg:
     image: postgres:15
-    container_name: lbp-pg
+    container_name: devc-pg
     volumes:
-      - lbp-pg-disk:/var/lib/postgres
+      - devc-pg-disk:/var/lib/postgres
     restart: always
+    ports:
+        - "23103:5432"
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: testing
     networks:
-      lbp-network:
-        ipv4_address: 10.10.1.2
+      devc-network:
+        ipv4_address: 23.102.1.2
 
-  lbp-mailpit:
+  devc-mailpit:
     image: 'axllent/mailpit:latest'
-    container_name: lbp-mailpit
+    container_name: devc-mailpit
     restart: always
     networks:
-      lbp-network:
-        ipv4_address: 10.10.1.3
+      devc-network:
+        ipv4_address: 23.102.1.3
 
-  lbp-q:
+  devc-q:
     build:
       context: .
       dockerfile: dockerfiles/QueueListener.Dockerfile
-    container_name: lbp-q
+    container_name: devc-q
     depends_on:
-      - lbp-api
+      - devc-api
     volumes:
       - .:/var/www/html
     restart: unless-stopped
     networks:
-      lbp-network:
-        ipv4_address: 10.10.1.4
+      devc-network:
+        ipv4_address: 23.102.1.4
 
-#  lbp-es:
+#  devc-es:
 #    image: elasticsearch:7.17.12
 #    environment:
 #      - discovery.type=single-node
@@ -62,30 +64,30 @@ services:
 #      - "9200:9200"
 #      - "9300:9300"
 #    volumes:
-#      - elasticsearch:/usr/share/elasticsearch/data
+#      - devc-elasticsearch-disk:/usr/share/elasticsearch/data
 #    networks:
-#      lbp-network:
-#        ipv4_address: 10.10.1.7
+#      devc-network:
+#        ipv4_address: 23.102.1.7
 
-#  lbp-0x:
+#  devc-0x:
 #    build:
 #      context: .
 #      dockerfile: dockerfiles/0x.Dockerfile
-#    container_name: lbp-0x
+#    container_name: devc-0x
 #    depends_on:
-#      - lbp-api
+#      - devc-api
 #    volumes:
 #      - .:/var/www/html
 #    restart: always
 #    networks:
-#      lbp-network:
-#        ipv4_address: 10.10.1.5
+#      devc-network:
+#        ipv4_address: 23.102.1.5
 
-#  lbp-fe-app:
+#  devc-fe-app:
 #    build:
 #      context: .
 #      dockerfile: dockerfiles/FeApp.Dockerfile
-#    container_name: lbp-fe-app
+#    container_name: devc-fe-app
 #    ports:
 #      - "1001:3000"
 #    volumes:
@@ -93,19 +95,19 @@ services:
 #      #- ./dockerfiles:/var/www/html/dockerfiles
 #    restart: always
 #    networks:
-#      lbp-network:
-#        ipv4_address: 10.10.1.6
+#      devc-network:
+#        ipv4_address: 23.102.1.6
 
 # On-disk storage of DB data, when containers are stopped
 volumes:
-  lbp-pg-disk: {}
-  elasticsearch:
+  devc-pg-disk: {}
+  devc-elasticsearch-disk:
     driver: local
 
 # Local network for services running using this docker-compose config
 networks:
-  lbp-network:
+  devc-network:
     ipam:
       driver: default
       config:
-        - subnet: 10.10.0.0/16
+        - subnet: 23.102.0.0/16

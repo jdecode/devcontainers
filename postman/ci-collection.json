@@ -78,7 +78,7 @@
 										},
 										{
 											"key": "Access-Control-Allow-Origin",
-											"value": "http://10.10.1.6:3000"
+											"value": "http://23.102.1.6:3000"
 										},
 										{
 											"key": "Access-Control-Allow-Credentials",
@@ -294,7 +294,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -582,7 +582,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -834,7 +834,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -1101,7 +1101,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -1364,7 +1364,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -1629,7 +1629,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -1895,7 +1895,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -2160,7 +2160,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -2425,7 +2425,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -2689,7 +2689,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -2953,7 +2953,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -3217,7 +3217,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -3486,7 +3486,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -3778,7 +3778,7 @@
 												},
 												{
 													"key": "Access-Control-Allow-Origin",
-													"value": "http://10.10.1.6:3000"
+													"value": "http://23.102.1.6:3000"
 												},
 												{
 													"key": "Access-Control-Allow-Credentials",
@@ -5371,17 +5371,17 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://10.10.1.1/api/v1",
+			"value": "http://23.102.1.1/api/v1",
 			"type": "string"
 		},
 		{
 			"key": "web_url",
-			"value": "http://10.10.1.1",
+			"value": "http://23.102.1.1",
 			"type": "string"
 		},
 		{
 			"key": "admin_url",
-			"value": "http://10.10.1.1/admin",
+			"value": "http://23.102.1.1/admin",
 			"type": "string"
 		}
 	]

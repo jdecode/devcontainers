@@ -129,13 +129,13 @@
                 ]
             },
             "pre-commit": [
-                "docker-compose exec -T lbp-api composer run pre-commit"
+                "docker-compose exec -T devc-api composer run pre-commit"
             ],
             "pre-push": [
-                "docker-compose exec -T lbp-api composer run pre-push"
+                "docker-compose exec -T devc-api composer run pre-push"
             ],
             "post-merge": [
-                "docker-compose exec -T lbp-api composer run post-merge"
+                "docker-compose exec -T devc-api composer run post-merge"
             ]
         }
     },
